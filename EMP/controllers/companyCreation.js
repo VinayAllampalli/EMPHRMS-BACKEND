@@ -40,14 +40,16 @@ exports.CompCreation = async (req, res) => {
 
 exports.GetCompany = async (req, res) => {
     console.log("Get Company Api is Triggred");
+    console.log(req.params.CompId)
     try {
-        const CompanyId = `Select * from employees where EmpCode='${req.body.Id}'`
+        const CompanyId = `Select * from company where companyid='${req.params.CompId}'`
         await client.query(CompanyId, async (err, result) => {
             if (err) {
                 console.log(err);
                 res.status(400).json({ success: false, message: "Somethimg Went wrong " })
             }
             else {
+                // console.log(result)
                 res.status(200).json({ success: true, message: "Data get successfully", result: result.rows })
             }
         })

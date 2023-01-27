@@ -22,6 +22,7 @@ app.use(cors());
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 var routeConfig = require('./routesConfig/routes-config')
+app.use("/public/uploads", express.static(__dirname + "/public/uploads"));
 
 //routes initials
 app.use('/api',routeConfig)

@@ -11,7 +11,7 @@
             }
             else{
                 res.status(200).json({success:true, message:"Data get successfully",result:result.rows});
-                console.log(result);
+                // console.log(result);
             }
         })
     }catch(err){

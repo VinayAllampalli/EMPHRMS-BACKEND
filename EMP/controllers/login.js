@@ -6,7 +6,7 @@ exports.login=async(req,res)=>{
     const loginApi = `Select * from employees where EmpCode='${req.body.EmpCode}'`
    
     await client.query(loginApi,async (err,user)=>{
-        console.log(user)
+        // console.log(user)
         if(err){
             console.log("not found");
             res.status(400).json({ success: false, message:"Somethimg Went wrong "})
