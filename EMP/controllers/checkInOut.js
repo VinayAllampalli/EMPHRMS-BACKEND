@@ -1,4 +1,7 @@
 const client = require('../connections/db');
+const DateFormat = require('../utils/date');
+const { earnings } = require('../utils/earnings');
+
 
 // postman : http://localhost:3000/api/logData/CheckIn/e2aeb693-ebb8-4bde-b739-90950fd55b7e change the value : checkin 
 //           http://localhost:3000/api/logData/CheckOut/e2aeb693-ebb8-4bde-b739-90950fd55b7e change the value : checkOut
@@ -22,7 +25,7 @@ exports.CheckedIn = async (req, res) => {
         TimeFormat = `${hours}:${mins}:${sec}`
         console.log(dateFormat, TimeFormat)
 
-        await client.query(`create TABLE if not exists logData(EmpCode VARCHAR(100) not null, checkIn_time VARCHAR(100) not null, checkOut_time VARCHAR(100) not null,Log_Date date not null, TotalHours Varchar(10) , Count int ) `, async (err) => {
+        await client.query(`create TABLE if not exists logData(EmpCode VARCHAR(100) not null, checkIn_time VARCHAR(100) not null, checkOut_time VARCHAR(100) not null,Log_Date date not null, TotalHours Varchar(10) , Count int, location varchar(30) not null, longitude varchar(100), latitude varchar(100), IPAddress varchar(100)) `, async (err) => {
             if (err) {
                 console.log('--->', err)
                 res.status(400).json({ success: false, "message": "someting went Wrong", err })
@@ -37,10 +40,10 @@ exports.CheckedIn = async (req, res) => {
                     res.status(400).json({ success: false, message: "someting went Wrong" })
                 }
                 else if (result.rowCount > 0) {
-                    res.status(400).json({ success: false, message: "Already checked in " })
+                    res.status(200).json({ success: false, message: "Already checked in" })
                 }
                 else {
-                    const insertQuery = `insert into logData(EmpCode,checkIn_time,checkOut_time,Log_Date,TotalHours,Count) values('${req.params.EmpCode}','${TimeFormat}','${TimeFormat}','${dateFormat}','0',0)`
+                    const insertQuery = `insert into logData(EmpCode,checkIn_time,checkOut_time,Log_Date,TotalHours,Count,location,longitude,latitude,IpAddress) values('${req.params.EmpCode}','${TimeFormat}','${TimeFormat}','${dateFormat}','0',0,'${req.body.location}','${req.body.longitude}','${req.body.latitude}','${req.body.IpAddress}')`
                     // const insertQuery = `update logData set EmpCode='${req.params.EmpCode}',checkIn_time='${TimeFormat}',checkOut_time='${TimeFormat}' where Log_Date='${dateFormat}' `
                     console.log("----+", insertQuery)
                     await client.query(insertQuery, (err, result) => {
@@ -107,7 +110,7 @@ exports.CheckedIn = async (req, res) => {
                                             res.status(400).json({ success: false, message: "someting went Wrong" })
                                         }
                                     })
-                                  
+
                                 }
                             });
 
@@ -125,3 +128,36 @@ exports.CheckedIn = async (req, res) => {
         res.status(400).json({ success: false, message: "Internal Error" })
     }
 }
+
+exports.IN = async (req, res) => {
+    try {
+        const TimeStamp = Date.now();
+        const dateObject = new Date(TimeStamp);
+        const date = DateFormat.dateCreation(dateObject)
+        console.log('CheckIN api is Triggred')
+        console.log(req.params)
+        const AlreadyCheckin = `select checkin_time from logData where EmpCode ='${req.params.EmpCode}' and log_date='${date}'`
+        await client.query(AlreadyCheckin, async (err, result) => {
+            // console.log(result)
+            if (err) {
+                console.log(err);
+                res.status(400).json({ success: false, message: "someting went Wrong" })
+            }
+            else if (result.rowCount > 0) {
+                console.log("---------------->")
+                res.status(200).json({ success: true, message: "Already checked in " })
+            }
+            else {
+                res.status(400).json({ success: true, message: "got to checkout" })
+            }
+        }
+        )
+    }
+
+    catch (err) {
+        console.log("----->", err)
+        res.status(400).json({ success: false, message: "Internal Error" })
+    }
+}
+
+
