@@ -78,7 +78,6 @@ exports.gettasks = async (req, res) => {
                 res.status(400).json({ success: false, message: "Somethimg Went wrong " });
             }
             else {
-                
                 return res.status(200).json({ success: true, message: "Successfully", result: result.rows });
             }
         })

@@ -11,13 +11,13 @@ const {taskCreation,taskstatusUpdate,gettasks}=require('../controllers/taskCreat
 const {imageUpload,getImage} = require('../controllers/imageUpload');
 const {postFeed,getFeed} = require('../controllers/postFeed');
 const {earnings} = require('../controllers/earnings');
+const {getLeaves,ApplyForLeaves,UpdateLeaveStatus,sendleavesForApproval,getAllmyleaves} = require('../controllers/leaves');
 
 
 const FILE_TYPE_MAP = {
     "image/png": "png",
     "image/pdf": "pdf",
 };
-
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         const isValid = FILE_TYPE_MAP[file.mimetype];
@@ -61,6 +61,9 @@ router.get('/getFeed/:compId',getFeed);
 router.post('/earnings/:compId',earnings);
 router.get('/getEarn/:EmpCode',getEarningsOfEmployee);
 router.post('/employeePay',employeePay);
-// router.get('getEmployeePay/:EmpCode',getEmployeePay)
-
+router.get('/getLeaves/:EmpCode',getLeaves);
+router.post('/appliedleaves/:EmpCode',ApplyForLeaves);
+router.get('/sendleavesForApproval/:reportingmangerid',sendleavesForApproval);
+router.put('/UpdateLeaveStatus/:leaveid',UpdateLeaveStatus);
+router.get('/getmyleaves/:EmpCode',getAllmyleaves);
 module.exports=router;
