@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ENVELOPE>
+  <HEADER>
+    <TALLYREQUEST>Import Data</TALLYREQUEST>
+  </HEADER>
+  <BODY>
+    <IMPORTDATA>
+      <REQUESTDESC>
+        <REPORTNAME>All Masters</REPORTNAME>
+        <STATICVARIABLES>
+          <SVCURRENTCOMPANY>Phoenix Scientific Suppliers</SVCURRENTCOMPANY>
+        </STATICVARIABLES>
+      </REQUESTDESC>
+      <REQUESTDATA>
+        <TALLYMESSAGE>
+          <GROUPS>
+            <GROUP NAME="Bank Accounts" RESERVEDNAME="Bank Accounts">
+              <SAMPLINGDATEONEFACTOR/>
+              <SAMPLINGDATETWOFACTOR/>
+              <ACTIVEFROM/>
+              <ACTIVETO/>
+              <GUID>44eb743a-d0e6-4700-a099-5838267908b3-00000016</GUID>
+              <PARENT>Current Assets</PARENT>
+              <SAMPLINGMETHOD/>
+              <SAMPLINGSTRONEFACTOR/>
+              <NARRATION/>
+              <REMOTEGUID/>
+              <REMOTEALTGUID/>
+              <BASICGROUPISCALCULABLE/>
+              <GRPDEBITPARENT/>
+              <GRPCREDITPARENT/>
+              <SYSDEBITPARENT/>
+              <SYSCREDITPARENT/>
+              <BALANCINGTYPE/>
+              <TDSAPPLICABLE/>
+              <TCSAPPLICABLE/>
+              <GSTAPPLICABLE/>
+              <RESERVEDNAME TYPE="String">Bank Accounts</RESERVEDNAME>
+              <ISBILLWISEON>No</ISBILLWISEON>
+              <ISCOSTCENTRESON/>
+              <ISADDABLE>No</ISADDABLE>
+              <ISMSTFROMSYNC/>
+              <ISUPDATINGTARGETID/>
+              <ASORIGINAL>No</ASORIGINAL>
+              <ISSUBLEDGER>No</ISSUBLEDGER>
+              <ISREVENUE>No</ISREVENUE>
+              <AFFECTSGROSSPROFIT>No</AFFECTSGROSSPROFIT>
+              <ISDEEMEDPOSITIVE>Yes</ISDEEMEDPOSITIVE>
+              <TRACKNEGATIVEBALANCES>Yes</TRACKNEGATIVEBALANCES>
+              <ISCONDENSED>No</ISCONDENSED>
+              <AFFECTSSTOCK/>
+              <ISGROUPFORLOANRCPT/>
+              <ISGROUPFORLOANPYMNT/>
+              <ISRATEINCLUSIVEVAT/>
+              <ISINVDETAILSENABLE/>
+              <SAMPLINGNUMONEFACTOR>0</SAMPLINGNUMONEFACTOR>
+              <SAMPLINGNUMTWOFACTOR>0</SAMPLINGNUMTWOFACTOR>
+              <SORTPOSITION> 220</SORTPOSITION>
+              <ALTERID> 23</ALTERID>
+              <REMOTEALTERID>0</REMOTEALTERID>
+              <MASTERID TYPE="Number"> 22</MASTERID>
+              <SAMPLINGAMTONEFACTOR/>
+              <SAMPLINGAMTTWOFACTOR/>
+              <SERVICETAXDETAILS.LIST>     </SERVICETAXDETAILS.LIST>
+              <VATDETAILS.LIST>     </VATDETAILS.LIST>
+              <SALESTAXCESSDETAILS.LIST>     </SALESTAXCESSDETAILS.LIST>
+              <GSTDETAILS.LIST>     </GSTDETAILS.LIST>
+              <LANGUAGENAME.LIST>
+                <NAME.LIST TYPE="String">
+                  <NAME>Bank Accounts</NAME>
+                </NAME.LIST>
+                <LANGUAGEID> 1033</LANGUAGEID>
+              </LANGUAGENAME.LIST>
+              <XBRLDETAIL.LIST>     </XBRLDETAIL.LIST>
+              <AUDITDETAILS.LIST>     </AUDITDETAILS.LIST>
+              <SCHVIDETAILS.LIST>     </SCHVIDETAILS.LIST>
+              <EXCISETARIFFDETAILS.LIST>     </EXCISETARIFFDETAILS.LIST>
+              <TCSCATEGORYDETAILS.LIST>     </TCSCATEGORYDETAILS.LIST>
+              <TDSCATEGORYDETAILS.LIST>     </TDSCATEGORYDETAILS.LIST>
+            </GROUP>
+          </GROUPS>
+        </TALLYMESSAGE>
+      </REQUESTDATA>
+    </IMPORTDATA>
+  </BODY>
+</ENVELOPE>

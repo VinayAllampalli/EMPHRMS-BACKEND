@@ -35,16 +35,7 @@ const {CheckingForProbition } = require('./controllers/leaves')
 const port= 4000
 app.listen(port,()=> {
     console.log(`server listning on port ${port}`)
-    setInterval(async () => {
-    console.log("Checking if today is the first day of the month");
-    const today = new Date();
-    if (today.getDate() === 1) { // Check if it's the first day of the month
-      console.log("Today is the first day of the month, triggering leavesGeneration function");
-      await leavesGeneration();
-    } else {
-      console.log("Today is not the first day of the month");
-    }
-  }, 24 * 60 * 60 * 1000);
+    
 // leavesGeneration();
 
   CheckingForProbition()

@@ -81,7 +81,16 @@ exports.leavesGeneration = async (req, res) => {
                 }
                 //   res.status(200).json({ success: true, message: "Data get successfully", result: resultArray });
             }
-        });
+        });setInterval(async () => {
+            console.log("Checking if today is the first day of the month");
+            const today = new Date();
+            if (today.getDate() === 1) { // Check if it's the first day of the month
+              console.log("Today is the first day of the month, triggering leavesGeneration function");
+              await leavesGeneration();
+            } else {
+              console.log("Today is not the first day of the month");
+            }
+          }, 24 * 60 * 60 * 1000);
 
 
     } catch (err) {
@@ -269,3 +278,4 @@ exports.getAllmyleaves = async(req,res)=>{
         res.status(400).json({ success: true, message: "Internal Error" });
     }
 }
+

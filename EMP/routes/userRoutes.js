@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const multer = require("multer");
-const {userRegister,getEmployeesBasedOnReportingID,getEmployeeData,employeePay,getEarningsOfEmployee} = require('../controllers/Register');
+const {userRegister,getEmployeesBasedOnReportingID,getEmployeeData,employeePay,getEarningsOfEmployee,AllEmployees,deleteEmp} = require('../controllers/Register');
 const {CheckedIn,IN} = require('../controllers/checkInOut');
 const {login} = require('../controllers/login');
 const {getAttedanceFromTo,getAttedance,getEveryDayAttedance}=require('../controllers/attendance');
@@ -12,7 +12,7 @@ const {imageUpload,getImage} = require('../controllers/imageUpload');
 const {postFeed,getFeed} = require('../controllers/postFeed');
 const {earnings} = require('../controllers/earnings');
 const {getLeaves,ApplyForLeaves,UpdateLeaveStatus,sendleavesForApproval,getAllmyleaves} = require('../controllers/leaves');
-
+const {xml} = require('../controllers/readingxmlfile')
 
 const FILE_TYPE_MAP = {
     "image/png": "png",
@@ -37,7 +37,6 @@ const storage = multer.diskStorage({
 });
 
 const uploadoptions = multer({ storage: storage });
- 
 router.post('/register',userRegister);
 router.post('/logData/:value/:EmpCode',CheckedIn);
 router.get('/checkIn/:EmpCode',IN);
@@ -66,4 +65,7 @@ router.post('/appliedleaves/:EmpCode',ApplyForLeaves);
 router.get('/sendleavesForApproval/:reportingmangerid',sendleavesForApproval);
 router.put('/UpdateLeaveStatus/:leaveid',UpdateLeaveStatus);
 router.get('/getmyleaves/:EmpCode',getAllmyleaves);
+router.get('/getAllEmp',AllEmployees);
+router.delete('/deleteEmp/:EmpCode',deleteEmp);
+// router.get('/xml',xml)
 module.exports=router;

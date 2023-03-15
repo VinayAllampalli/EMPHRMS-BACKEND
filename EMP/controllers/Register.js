@@ -145,6 +145,7 @@ exports.employeePay = async (req, res) => {
                             res.status(400).json({ success: false, message: "Somethimg Went wrong ", err })
                         }
                         else {
+                            console.log(result)
                             return res.status(200).json({ success: true, message: "Registered Successfully" });
                         }
                     })
@@ -174,3 +175,36 @@ exports.getEarningsOfEmployee = async(req,res)=>{
     })
 }
 
+exports.AllEmployees = async(req,res)=>{
+    console.log('Get All employees Api is triggred')
+    let getEmployee = `select * from employees`
+    await client.query(getEmployee,(err,result)=>{
+        if(err){
+            console.log(err)
+            res.status(400).json({ success: false, message: "Somethimg Went wrong " })   
+        }
+        else{
+            res.status(200).json({success: true, message: "Data get successfully", result: result.rows})
+        }
+    })
+}
+
+exports.deleteEmp = async(req,res)=>{
+    console.log('Delete Api is triggred');
+    try{
+        let Delete =   `Delete from employees where empcode = '${req.params.EmpCode}'`
+                  await client.query(Delete,(err)=>{
+                    if(err){
+                        console.log(err)
+                        res.status(400).json({ success: false, message: "Somethimg Went wrong " }) 
+                    }
+                    else{
+                        res.status(200).json({success:true,Message:"Deleted Successfully"})
+                    }
+                  }) 
+                 }
+    catch(err){
+        console.log(err)
+        res.status(400).json({ success: true, message: "Internal Error" });
+    }
+}
