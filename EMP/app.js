@@ -5,6 +5,8 @@ var logger = require('morgan');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 
+const swaggerUI = require('swagger-ui-express');
+const swaggerSpec = require('./swaggerOptions.js');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
@@ -18,6 +20,9 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:false}))
 app.use(cors());
 
+
+
+app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerSpec));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);

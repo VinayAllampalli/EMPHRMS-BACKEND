@@ -71,3 +71,24 @@ catch(err){
     res.status(400).json({ success: true, message: "Internal Error" });
 }
 }
+
+exports.getEmpDataWithImage = async(req,res)=>{
+    console.log("get Data with image join api is triggred");
+    try{
+        let query = `  SELECT employees.empcode,employees.firstname, employees.lastname, COALESCE(image.file, 'No image') as file
+        FROM employees
+        LEFT JOIN image ON employees.empcode = image.empcode;`
+        await client.query(query,(err,result)=>{
+            if(!err){
+                return res.status(200).json({ success: true, message: "fetch Successfully",result:result.rows });
+            }
+            else{
+                res.status(400).json({ success: false, message: "Somethimg Went wrong ", err })  
+            }
+        })
+    }
+    catch(err){
+        console.log(err);
+        res.status(400).json({ success: true, message: "Internal Error" });
+    }
+}

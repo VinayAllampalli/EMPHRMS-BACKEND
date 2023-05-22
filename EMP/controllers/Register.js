@@ -208,3 +208,23 @@ exports.deleteEmp = async(req,res)=>{
         res.status(400).json({ success: true, message: "Internal Error" });
     }
 }
+
+exports.empInfo = async(req,res)=>{
+    console.log("Emp Info based on empcode Api is triggred")
+    try{
+    const body = req.body 
+    const info = ` select * from employees where empcode = '${req.params.EmpCode}'`
+    await client.query(info,(err,result)=>{
+        if(err){
+            console.log(err)
+            res.status(400).json({ success: false, message: "Somethimg Went wrong " }) 
+        }
+        else{
+            res.status(200).json({success: true, result: result.rows})
+        }
+    })
+    }catch(err){
+        res.status(400).json({ success: true, message: "Internal Error" });
+        throw err
+    }
+}

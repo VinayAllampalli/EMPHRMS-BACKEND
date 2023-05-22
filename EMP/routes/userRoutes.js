@@ -1,14 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const multer = require("multer");
-const {userRegister,getEmployeesBasedOnReportingID,getEmployeeData,employeePay,getEarningsOfEmployee,AllEmployees,deleteEmp} = require('../controllers/Register');
+const {userRegister,getEmployeesBasedOnReportingID,getEmployeeData,employeePay,getEarningsOfEmployee,AllEmployees,deleteEmp,empInfo} = require('../controllers/Register');
 const {CheckedIn,IN} = require('../controllers/checkInOut');
 const {login} = require('../controllers/login');
 const {getAttedanceFromTo,getAttedance,getEveryDayAttedance}=require('../controllers/attendance');
 const {CompCreation,GetCompany} = require('../controllers/companyCreation');
 const {DOB,DOJ}=require('../controllers/occasions');
 const {taskCreation,taskstatusUpdate,gettasks}=require('../controllers/taskCreation');
-const {imageUpload,getImage} = require('../controllers/imageUpload');
+const {imageUpload,getImage,getEmpDataWithImage} = require('../controllers/imageUpload');
 const {postFeed,getFeed} = require('../controllers/postFeed');
 const {earnings} = require('../controllers/earnings');
 const {getLeaves,ApplyForLeaves,UpdateLeaveStatus,sendleavesForApproval,getAllmyleaves} = require('../controllers/leaves');
@@ -37,10 +37,102 @@ const storage = multer.diskStorage({
 });
 
 const uploadoptions = multer({ storage: storage });
+/**
+ * @swagger
+ * api/register:
+ *   post:
+ *     summary: Register a new user
+ *     description: Register a new user with the given details
+ *     parameters:
+ *       - in: body
+ *         name: user
+ *         description: The user to create.
+ *         schema:
+ *           type: object
+ *           required:
+ *             - name
+ *             - email
+ *             - password
+ *           properties:
+ *             name:
+ *               type: string
+ *             email:
+ *               type: string
+ *             password:
+ *               type: string
+ *     responses:
+ *       200:
+ *         description: User created successfully.
+ *       400:
+ *         description: Invalid input.
+ */
 router.post('/register',userRegister);
 router.post('/logData/:value/:EmpCode',CheckedIn);
 router.get('/checkIn/:EmpCode',IN);
+
+/**
+ * @swagger
+ * /api/login:
+ *   post:
+ *     summary: Login with employee code and password
+ *     description: Login with employee code and password
+ *     tags:
+ *       - Auth
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               EmpCode:
+ *                 type: string
+ *                 description: Employee code
+ *               password:
+ *                 type: string
+ *                 description: User's password.
+ *     responses:
+ *       200:
+ *         description: Login successful
+ *       400:
+ *         description: Login failed
+ */
 router.post('/login',login);
+
+/**
+ * @swagger
+ * /getAttedanceFromTo/{EmpCode}:
+ *   get:
+ *     summary: Get attendance data of an employee for a specified time period.
+ *     parameters:
+ *       - in: path
+ *         name: EmpCode
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: Employee code of the employee whose attendance data is to be retrieved.
+ *       - in: query
+ *         name: from
+ *         schema:
+ *           type: string
+ *         required: true
+ *        
+ *       - in: query
+ *         name: to
+ *         schema:
+ *           type: string
+ *         required: true
+ *         
+ *     responses:
+ *       200:
+ *         description: Success.
+ *       400:
+ *         description: Invalid input.
+ *       404:
+ *         description: Employee not found.
+ *       500:
+ *         description: Internal server error.
+ */
 router.get('/getAttedanceFromTo/:EmpCode',getAttedanceFromTo);
 router.get('/getattendance/:EmpCode/:date',getAttedance);
 router.get('/getEveryDayAttedance/:EmpCode',getEveryDayAttedance)
@@ -66,6 +158,8 @@ router.get('/sendleavesForApproval/:reportingmangerid',sendleavesForApproval);
 router.put('/UpdateLeaveStatus/:leaveid',UpdateLeaveStatus);
 router.get('/getmyleaves/:EmpCode',getAllmyleaves);
 router.get('/getAllEmp',AllEmployees);
+router.get('/getEmployeeDatawithImage',getEmpDataWithImage);
+router.get('/empInfo/:EmpCode',empInfo)
 router.delete('/deleteEmp/:EmpCode',deleteEmp);
 // router.get('/xml',xml)
 module.exports=router;

@@ -34,4 +34,4 @@ const newColumns = Object.keys(newCsv[0]);
 const commonColumns = oldColumns.filter(column => newColumns.includes(column));
 
 // Log the common column names
-console.log(commonColumns);
+// console.log(commonColumns);
