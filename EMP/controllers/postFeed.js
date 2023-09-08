@@ -31,23 +31,23 @@ exports.postFeed = async (req, res) => {
     }
 }
 
-exports.getFeed= async(req,res)=>{
+exports.getFeed = async (req, res) => {
     console.log("get Feed api is triggred");
-    try{
+    try {
         let getAllFeedBasedOnCompId = `select * from feed where companyId='${req.params.compId}' 
         ORDER BY postdate Desc LIMIT 5;`
-        await client.query(getAllFeedBasedOnCompId,(err,result)=>{
-            if(err){
+        await client.query(getAllFeedBasedOnCompId, (err, result) => {
+            if (err) {
                 console.log(err);
                 res.status(400).json({ success: false, message: "Somethimg Went wrong ", err })
             }
             else {
                 console.log(result);
-                return res.status(200).json({ success: true, message: " Successfully", result:result.rows });
+                return res.status(200).json({ success: true, message: " Successfully", result: result.rows });
             }
         })
     }
-    catch(err){
+    catch (err) {
         console.log(err);
         res.status(400).json({ success: true, message: "Internal Error" });
     }

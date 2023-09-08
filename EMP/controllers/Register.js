@@ -2,7 +2,8 @@ const client = require('../connections/db');
 const Password = require('../utils/password')
 const DateFormat = require('../utils/date');
 const Earnings = require('../utils/earnings');
-const Probition = require('../utils/probition')
+const Probition = require('../utils/probition');
+const ID = require('../utils/uuid')
 
 
 exports.userRegister = async (req, res) => {
@@ -21,7 +22,7 @@ exports.userRegister = async (req, res) => {
         const dateObject = new Date(TimeStamp);
         const date = DateFormat.dateCreation(dateObject);
         const password = Password.passwordHash(req.body.password);
-        const probitionDATE = Probition.probition(probitionValue,6);
+        const probitionDATE = Probition.probition(probitionValue, 6);
         console.log(probitionDATE)
         const user = await client.query(`select * from Employees where EmpCode ='${data.Empcode}' and email='${data.email}' `);
         console.log("----->", user.rowCount);
@@ -29,11 +30,12 @@ exports.userRegister = async (req, res) => {
             return res.status(200).json({ sucess: true, message: "EmpCode / email is already exits ....!" })
         }
         else {
-            let DateOfProbition = probitionDATE.Date 
+            const employeeId = ID.generateSixDigitUUID()
+            let DateOfProbition = probitionDATE.Date
             let StatusOfProbition = probitionDATE.Status
-            
+
             const Register = `insert into Employees(firstName,lastName,EmpCode,email,phoneNo,department,DOB,DOJ,address,gender,password,role,ReportingManager,ReportingMangerID,CompanyId,CompanymailId,FatherName,AadharNumber,PanNumber,UanNumber,bankAccNumber,bankName,bankIfscCode,createdOn,probitiondate,probitionstatus)
-                               values ('${data.firstName}','${data.lastName}','${data.EmpCode}','${data.email}','${data.phoneNo}','${data.department}','${data.DOB}','${data.DOJ}','${data.address}','${data.gender}','${password}','${data.role}','${data.ReportingManager}','${data.ReportingMangerID}','${data.CompanyId}','${data.CompanymailId}','${data.FatherName}','${data.AadharNumber}','${data.PanNumber}','${data.UanNumber}','${data.bankAccNumber}','${data.bankName}','${data.bankIfscCode}','${date}','${DateOfProbition}','${StatusOfProbition}')`
+                               values ('${data.firstName}','${data.lastName}','${employeeId}','${data.email}','${data.phoneNo}','${data.department}','${data.DOB}','${data.DOJ}','${data.address}','${data.gender}','${password}','${data.role}','${data.ReportingManager}','${data.ReportingMangerID}','${data.CompanyId}','${data.CompanymailId}','${data.FatherName}','${data.AadharNumber}','${data.PanNumber}','${data.UanNumber}','${data.bankAccNumber}','${data.bankName}','${data.bankIfscCode}','${date}','${DateOfProbition}','${StatusOfProbition}')`
             await client.query(Register, (err, result) => {
                 if (!err) {
                     return res.status(200).json({ success: true, message: "Registered Successfully" });
@@ -160,14 +162,14 @@ exports.employeePay = async (req, res) => {
 }
 
 
-exports.getEarningsOfEmployee = async(req,res)=>{
+exports.getEarningsOfEmployee = async (req, res) => {
     console.log('Get Earnings Api of Employee is triggred');
     let Data = `SELECT *FROM employeePay
     WHERE empcode = '${req.params.EmpCode}'`
-    await client.query(Data,(err,result)=>{
-        if(err){
+    await client.query(Data, (err, result) => {
+        if (err) {
             console.log(err)
-            res.status(400).json({ success: false, message: "Somethimg Went wrong " })   
+            res.status(400).json({ success: false, message: "Somethimg Went wrong " })
         }
         else {
             res.status(200).json({ success: true, message: "Data get successfully", result: result.rows })
@@ -175,55 +177,55 @@ exports.getEarningsOfEmployee = async(req,res)=>{
     })
 }
 
-exports.AllEmployees = async(req,res)=>{
+exports.AllEmployees = async (req, res) => {
     console.log('Get All employees Api is triggred')
-    let getEmployee = `select * from employees`
-    await client.query(getEmployee,(err,result)=>{
-        if(err){
+    let getEmployee = `select * from employees where companyid = '${req.params.compId}'`
+    await client.query(getEmployee, (err, result) => {
+        if (err) {
             console.log(err)
-            res.status(400).json({ success: false, message: "Somethimg Went wrong " })   
+            res.status(400).json({ success: false, message: "Somethimg Went wrong " })
         }
-        else{
-            res.status(200).json({success: true, message: "Data get successfully", result: result.rows})
+        else {
+            res.status(200).json({ success: true, message: "Data get successfully", result: result.rows })
         }
     })
 }
 
-exports.deleteEmp = async(req,res)=>{
+exports.deleteEmp = async (req, res) => {
     console.log('Delete Api is triggred');
-    try{
-        let Delete =   `Delete from employees where empcode = '${req.params.EmpCode}'`
-                  await client.query(Delete,(err)=>{
-                    if(err){
-                        console.log(err)
-                        res.status(400).json({ success: false, message: "Somethimg Went wrong " }) 
-                    }
-                    else{
-                        res.status(200).json({success:true,Message:"Deleted Successfully"})
-                    }
-                  }) 
-                 }
-    catch(err){
+    try {
+        let Delete = `Delete from employees where empcode = '${req.params.EmpCode}'`
+        await client.query(Delete, (err) => {
+            if (err) {
+                console.log(err)
+                res.status(400).json({ success: false, message: "Somethimg Went wrong " })
+            }
+            else {
+                res.status(200).json({ success: true, Message: "Deleted Successfully" })
+            }
+        })
+    }
+    catch (err) {
         console.log(err)
         res.status(400).json({ success: true, message: "Internal Error" });
     }
 }
 
-exports.empInfo = async(req,res)=>{
+exports.empInfo = async (req, res) => {
     console.log("Emp Info based on empcode Api is triggred")
-    try{
-    const body = req.body 
-    const info = ` select * from employees where empcode = '${req.params.EmpCode}'`
-    await client.query(info,(err,result)=>{
-        if(err){
-            console.log(err)
-            res.status(400).json({ success: false, message: "Somethimg Went wrong " }) 
-        }
-        else{
-            res.status(200).json({success: true, result: result.rows})
-        }
-    })
-    }catch(err){
+    try {
+        const body = req.body
+        const info = ` select * from employees where empcode = '${req.params.EmpCode}'`
+        await client.query(info, (err, result) => {
+            if (err) {
+                console.log(err)
+                res.status(400).json({ success: false, message: "Somethimg Went wrong " })
+            }
+            else {
+                res.status(200).json({ success: true, result: result.rows })
+            }
+        })
+    } catch (err) {
         res.status(400).json({ success: true, message: "Internal Error" });
         throw err
     }

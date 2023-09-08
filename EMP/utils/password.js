@@ -1,11 +1,14 @@
-const bycrypt = require('bcrypt');
+const bcrypt = require('bcrypt');
 
 passwordHash = (params) =>{
-    let hash =  bycrypt.hashSync(params, 10);
-    return  hash;
+    const saltRounds = 10;
+    const salt = bcrypt.genSaltSync(saltRounds);
+    const hash = bcrypt.hashSync(params, salt);
+    return hash;
 }
 passwordCompare = async (password,hash)=>{
-    let isVerfied = bycrypt.compareSync(password,hash);
+    let isVerfied = bcrypt.compareSync(password,hash);
     return isVerfied
 }
 module.exports = {passwordHash,passwordCompare}
+

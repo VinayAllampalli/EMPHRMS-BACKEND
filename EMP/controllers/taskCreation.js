@@ -17,7 +17,7 @@ exports.taskCreation = async (req, res) => {
         const data3 = req.body
         console.log('---->', data3)
         console.log(req.params)
-        for(let j=0;j<data3.length;j++){
+        for (let j = 0; j < data3.length; j++) {
             let obj = data3[j]
             // console.log('obj',obj)
             let objstartDate = moment(data3[j].startDate).format('DD/MMM/YYYY');
@@ -29,29 +29,27 @@ exports.taskCreation = async (req, res) => {
             const date1 = DateFormat.dateCreation(dateObject)
             const taskcreation = `insert into ALLTASK(userEmpCode,taskDescription,startDate,endDate,assignedBy,assignedDate,companyId,status,assignedName)
                                values('${obj.userEmpCode}','${obj.taskDescription}','${objstartDate}','${objendDate}','${req.params.Empcode}','${date1}','${req.params.compId}','${obj.status}',(SELECT firstname FROM employees WHERE EmpCode = '${req.params.Empcode}')) `
-
-            await client.query(taskcreation, async (err) => {
-                if (err) {
-                    console.log(err);
-                    res.status(400).json({ success: false, message: "Somethimg Went wrong" });
-                }
-                else {
-                    return res.status(200).json({ success: true, message: "Task created Successfully" });
-                }
-            })
+            await client.query(taskcreation);
         }
-    }
-    catch (err) {
+
+        return res.status(200).json({ success: true, message: "Task created Successfully" });
+    } catch (err) {
         console.log(err);
-        res.status(400).json({ success: true, message: "Internal Error" });
+        res.status(400).json({ success: false, message: "Something Went wrong" });
     }
 }
 
 exports.taskstatusUpdate = async (req, res) => {
     console.log("Task Status Update triggred");
- console.log(req.body)
+    let status = '';
+    if (req.body.status === 'Done') {
+      status = 'Completed';
+    } else {
+      status = req.body.status;
+    }
+
     try {
-        let update = `update alltask set status='Done' where taskId='${req.params.taskId}'`
+        let update = `update alltask set status='${status}' where taskId='${req.params.taskId}'`
         await client.query(update, (err) => {
             if (err) {
                 console.log(err);
@@ -71,7 +69,7 @@ exports.gettasks = async (req, res) => {
     console.log("get Task based on userId/Empcode api triggred");
     try {
         console.log(req.params.EmpCode)
-        let GetTask = `select * from alltask where (userempcode='${req.params.EmpCode}' and status='Todo' or status = 'Inprogress')`;
+        let GetTask = `select * from alltask where (userempcode='${req.params.EmpCode}')`;
         await client.query(GetTask, (err, result) => {
             if (err) {
                 console.log(err);
@@ -84,6 +82,28 @@ exports.gettasks = async (req, res) => {
     }
     catch (err) {
         console.log(err);
+        res.status(400).json({ success: true, message: "Internal Error" });
+    }
+}
+
+exports.getalltaskAssign = async (req, res) => {
+    console.log("Get all task Assigned api is triggered")
+    try {
+        let data = req.params
+        const assignedQuery = `select * from Alltask where assignedby ='${data.EmpCode}' and companyid='${data.companyId}'`
+        await client.query(assignedQuery, (err, result) => {
+            console.log(result)
+            if (err) {
+                console.log(err);
+                res.status(400).json({ success: false, message: "Somethimg Went wrong " });
+            }
+            else {
+                return res.status(200).json({ success: true, message: "Successfully", result: result.rows });
+            }
+        })
+    }
+    catch (err) { 
+        console.log(err)
         res.status(400).json({ success: true, message: "Internal Error" });
     }
 }

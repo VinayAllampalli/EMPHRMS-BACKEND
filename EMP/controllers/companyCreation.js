@@ -1,33 +1,35 @@
 const client = require('../connections/db');
 const uuid = require('uuid');
 const DateFormat = require('../utils/date');
+const Password = require('../utils/password');
 exports.CompCreation = async (req, res) => {
     console.log("Company Creation api triggred");
     try {
+
         const UUID = uuid.v4()
         const data = req.body
+        console.log(data)
         const TimeStamp = Date.now();
         const dateObject = new Date(TimeStamp);
         const date = DateFormat.dateCreation(dateObject)
-        let companyTable = `create TABLE if not exists company(companyId varchar(100) not null, companyName varchar(100) not null, companyMailId varchar(100) not null, companyPhoneNo varchar(100) not null, companyAddress varchar(100) not null, companyBranch varchar(100) not null,createdOn date not null)`
-        await client.query(companyTable, (err) => {
-            console.log("--->", err)
-        })
 
-        let Company = await client.query(`select * from company where companyName='${data.companyBranch}' and companyMailId='${data.companyMailId}'`)
+        let Company = await client.query(`select * from company where companybranch='${data.companyBranch}' and companymailid='${data.companyMailId}'`);
+        console.log("///", Company.rowCount)
         if (Company.rowCount > 0) {
-            return res.status(200).json({ sucess: false, message: "Company Name / Company email is already exits ....!" })
+            console.log(">>")
+            return res.status(400).json({ sucess: false, message: "Company Name / Company email is already exits ....!" })
         }
         else {
-            const CompanyData = `insert into company(companyId,companyName,companyMailId,companyPhoneNo,companyAddress,companyBranch,createdOn)
-                                 values('${UUID}','${data.companyName}','${data.companyMailId}','${data.companyPhoneNo}','${data.companyAddress}','${data.companyBranch}','${date}')`
-            await client.query(CompanyData, (err, result) => {
+            const password = Password.passwordHash(req.body.adminPassword);
+            const CompanyData = `insert into company(companyId,companyName,companyMailId,companyPhoneNo,companyAddress,companyBranch,createdOn,adminname,adminphonenumber,adminemailid,adminpassword) 
+                                 values('${UUID}','${data.companyName}','${data.companyMailId}','${data.companyPhoneNo}','${data.companyAddress}','${data.companyBranch}','${date}','${data.adminName}','${data.adminphnNo}','${data.adminMailId}','${password}')`
+            await client.query(CompanyData, (err) => {
                 if (!err) {
-                    return res.status(200).json({ success: true, message: "Company Registered Successfully" })
+                    res.status(200).json({ success: true, message: "Company created Successfully" })
                 }
                 else {
                     res.status(400).json({ success: false, message: "Somethimg Went wrong ", err })
-                    console.log("---->", err)
+                    console.log(err)
                 }
             })
         }

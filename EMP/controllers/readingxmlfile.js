@@ -5,7 +5,7 @@
     
     fs.readFile('C:/Users/Lotus/Desktop/XML/testfile.xml', function(err, data) {
       if (err) {
-        console.log(err);
+        // console.log(err);
         return;
       }
       const cleanData = data.toString().replace()

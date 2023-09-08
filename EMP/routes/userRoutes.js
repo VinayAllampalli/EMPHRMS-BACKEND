@@ -1,18 +1,22 @@
 const express = require('express');
 const router = express.Router();
+const passport = require('passport');
 const multer = require("multer");
 const {userRegister,getEmployeesBasedOnReportingID,getEmployeeData,employeePay,getEarningsOfEmployee,AllEmployees,deleteEmp,empInfo} = require('../controllers/Register');
 const {CheckedIn,IN} = require('../controllers/checkInOut');
-const {login} = require('../controllers/login');
-const {getAttedanceFromTo,getAttedance,getEveryDayAttedance}=require('../controllers/attendance');
+const {login,adminLogin} = require('../controllers/login');
+const {getAttedanceFromTo,getAttedance,getEveryDayAttedance,getAllEmployeesTodayAttedance}=require('../controllers/attendance');
 const {CompCreation,GetCompany} = require('../controllers/companyCreation');
-const {DOB,DOJ}=require('../controllers/occasions');
-const {taskCreation,taskstatusUpdate,gettasks}=require('../controllers/taskCreation');
-const {imageUpload,getImage,getEmpDataWithImage} = require('../controllers/imageUpload');
+const {DOB,DOJ,holidays,getHolidays,getallMasterHolidays,deleteHoliday}=require('../controllers/occasions');
+const {taskCreation,taskstatusUpdate,gettasks,getalltaskAssign}=require('../controllers/taskCreation');
+const {imageUpload,getImage,getEmpDataWithImage,MasterholidayImageUpload} = require('../controllers/imageUpload');
 const {postFeed,getFeed} = require('../controllers/postFeed');
 const {earnings} = require('../controllers/earnings');
-const {getLeaves,ApplyForLeaves,UpdateLeaveStatus,sendleavesForApproval,getAllmyleaves} = require('../controllers/leaves');
-const {xml} = require('../controllers/readingxmlfile')
+const {getLeaves,ApplyForLeaves,UpdateLeaveStatus,sendleavesForApproval,getAllmyleaves,leavesGeneration} = require('../controllers/leaves');
+const {xml} = require('../controllers/readingxmlfile');
+const {forgotPassword,forgotPasswordGenratedOtp} = require('../controllers/forgotPassword');
+const {orgTree,dbTables} = require('../controllers/organizationTree');
+
 
 const FILE_TYPE_MAP = {
     "image/png": "png",
@@ -98,6 +102,7 @@ router.get('/checkIn/:EmpCode',IN);
  *         description: Login failed
  */
 router.post('/login',login);
+router.post("/adminLogin",adminLogin)
 
 /**
  * @swagger
@@ -157,9 +162,35 @@ router.post('/appliedleaves/:EmpCode',ApplyForLeaves);
 router.get('/sendleavesForApproval/:reportingmangerid',sendleavesForApproval);
 router.put('/UpdateLeaveStatus/:leaveid',UpdateLeaveStatus);
 router.get('/getmyleaves/:EmpCode',getAllmyleaves);
-router.get('/getAllEmp',AllEmployees);
+router.get('/getAllEmp/:compId',AllEmployees);
 router.get('/getEmployeeDatawithImage',getEmpDataWithImage);
 router.get('/empInfo/:EmpCode',empInfo)
 router.delete('/deleteEmp/:EmpCode',deleteEmp);
-// router.get('/xml',xml)
+router.post('/sendOtp',forgotPasswordGenratedOtp);
+router.put('/updatePassword/:email/:value',forgotPassword);
+router.put('/holidayImageUpload',uploadoptions.single("file"),MasterholidayImageUpload);
+router.post('/holidays/:compId',holidays);
+router.get('/allHolidays/:year/:compId',getHolidays);
+router.post('/leavesgenerate',leavesGeneration);
+router.get('/getalltaskAssign/:EmpCode/:companyId',getalltaskAssign);
+router.get('/dbtables',dbTables);
+router.get('/getallemployeesAttendance/:compId',getAllEmployeesTodayAttedance);
+router.get('/getallMasterHolidays',getallMasterHolidays);
+router.delete('/deleteHoliday/:compId/:id',deleteHoliday);
+
+// Define Google Sign-In routes
+router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+
+router.get(
+  '/google/callback',
+  passport.authenticate('google', { failureRedirect: 'http://localhost:4200/login' }),
+  (req, res) => {
+    // Redirect to your Angular frontend after successful authentication
+    res.redirect('http://localhost:4200/header/dashboard');
+  }
+);
+
+router.get('/orgList/:compId',orgTree)
+
+
 module.exports=router;

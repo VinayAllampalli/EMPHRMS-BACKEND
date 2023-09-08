@@ -4,6 +4,7 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const cors = require('cors');
 const bodyParser = require('body-parser');
+const passport = require('passport')
 
 const swaggerUI = require('swagger-ui-express');
 const swaggerSpec = require('./swaggerOptions.js');
@@ -19,6 +20,8 @@ app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:false}))
 app.use(cors());
+app.use(passport.initialize());
+
 
 
 
@@ -34,18 +37,12 @@ app.use('/api',routeConfig)
 
 
 
-const client =require("./connections/db");
-const { leavesGeneration } = require('./controllers/leaves');
-const {CheckingForProbition } = require('./controllers/leaves')
 const port= 4000
 app.listen(port,()=> {
     console.log(`server listning on port ${port}`)
-    
-// leavesGeneration();
-
-  CheckingForProbition()
-
 })
+module.exports = app;
+
 
 
 
@@ -76,9 +73,3 @@ app.listen(port,()=> {
 //     })
 //     console.log("done")
 //   });
-
-
-
-
-
-module.exports = app;

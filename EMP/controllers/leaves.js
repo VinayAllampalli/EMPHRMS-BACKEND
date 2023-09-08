@@ -79,18 +79,19 @@ exports.leavesGeneration = async (req, res) => {
                         }
                     }
                 }
-                //   res.status(200).json({ success: true, message: "Data get successfully", result: resultArray });
+                res.status(200).json({ success: true, message: "leaves added successfully" });
             }
-        });setInterval(async () => {
-            console.log("Checking if today is the first day of the month");
-            const today = new Date();
-            if (today.getDate() === 1) { // Check if it's the first day of the month
-              console.log("Today is the first day of the month, triggering leavesGeneration function");
-              await leavesGeneration();
-            } else {
-              console.log("Today is not the first day of the month");
-            }
-          }, 24 * 60 * 60 * 1000);
+        });
+        // setInterval(async () => {
+        //     console.log("Checking if today is the first day of the month");
+        //     const today = new Date();
+        //     if (today.getDate() === 1) { // Check if it's the first day of the month
+        //       console.log("Today is the first day of the month, triggering leavesGeneration function");
+        //       await leavesGeneration();
+        //     } else {
+        //       console.log("Today is not the first day of the month");
+        //     }
+        //   }, 24 * 60 * 60 * 1000);
 
 
     } catch (err) {
@@ -120,15 +121,15 @@ exports.getLeaves = async (req, res) => {
     }
 }
 
-exports.UpdateLeaveStatus = async (req,res)=>{
+exports.UpdateLeaveStatus = async (req, res) => {
     console.log('Update leave status api is triggred')
-    try{
+    try {
         let data = req.body.action
-        
-        console.log("-->",data)
-        if(data=='Approve'){
+
+        console.log("-->", data)
+        if (data == 'Approve') {
             let UpdataStatusApproved = `UPDATE leavesapplied SET status = 'Approved' where leaveid='${req.params.leaveid}'`
-            await client.query(UpdataStatusApproved,(err,result)=>{
+            await client.query(UpdataStatusApproved, (err, result) => {
                 if (err) {
                     console.log(err)
                     res.status(400).json({ success: false, message: "Something Went wrong " });
@@ -138,9 +139,9 @@ exports.UpdateLeaveStatus = async (req,res)=>{
                 }
             })
         }
-        else if(data=='Reject'){
+        else if (data == 'Reject') {
             let UpdataStatusReject = `UPDATE leavesapplied SET status='Reject' where leaveid='${req.params.leaveid}'`
-            await client.query(UpdataStatusReject,(err,result)=>{
+            await client.query(UpdataStatusReject, (err, result) => {
                 if (err) {
                     console.log(err)
                     res.status(400).json({ success: false, message: "Something Went wrong " });
@@ -151,7 +152,7 @@ exports.UpdateLeaveStatus = async (req,res)=>{
             })
         }
     }
-    catch(err){
+    catch (err) {
         console.log(err)
         res.status(400).json({ success: true, message: "Internal Error" });
     }
@@ -189,11 +190,11 @@ exports.ApplyForLeaves = async (req, res) => {
                                 console.log(err)
                                 res.status(400).json({ success: false, message: "Something Went wrong " });
                             }
-                            else if( req.body.totalDays > totalCL){
+                            else if (req.body.totalDays > totalCL) {
                                 res.status(200).json({ success: true, message: "You have less leaves..." });
                             }
                             else {
-                               
+
                                 let updatetable = `INSERT INTO leavesapplied (leaveId,empCode,reportingmangerid, typeOfleave, totalDays,fromDate,toDate,note,status) 
                                 values('${leaveIdString}','${req.params.EmpCode}','${reportingManagerID}','${req.body.typeofleave}',${req.body.totalDays},'${objstartDate}','${objendDate}','${req.body.note}','Pending')`
                                 await client.query(updatetable)
@@ -210,7 +211,7 @@ exports.ApplyForLeaves = async (req, res) => {
                                 console.log(err)
                                 res.status(400).json({ success: false, message: "Something Went wrong " });
                             }
-                            else if(req.body.totalDays > totalSL){
+                            else if (req.body.totalDays > totalSL) {
                                 res.status(200).json({ success: true, message: "You have less leaves..." });
                             }
                             else {
@@ -219,7 +220,7 @@ exports.ApplyForLeaves = async (req, res) => {
                                 await client.query(updatetable)
                                 res.status(200).json({ success: true, message: "Leave applied Sucessfully" });
                             }
-                            
+
                         })
                     }
                     else if (req.body.typeofleave == 'PaidLeave') {
@@ -259,21 +260,21 @@ exports.sendleavesForApproval = async (req, res) => {
 }
 
 
-exports.getAllmyleaves = async(req,res)=>{
+exports.getAllmyleaves = async (req, res) => {
     console.log('Get All my leaves api is  triggered')
-    try{
+    try {
         let allMyleaves = `select * from leavesapplied where empcode = '${req.params.EmpCode}'`
-        await client.query(allMyleaves,(err,result)=>{
-            if(err){
+        await client.query(allMyleaves, (err, result) => {
+            if (err) {
                 console.log(err)
-                res.status(400).json({ success: false, message: "Something Went wrong " }); 
+                res.status(400).json({ success: false, message: "Something Went wrong " });
             }
-            else{
-                return res.status(200).json({ success: true, message: "Data Fetch Successfully", result: result.rows });   
+            else {
+                return res.status(200).json({ success: true, message: "Data Fetch Successfully", result: result.rows });
             }
         })
     }
-    catch(err){
+    catch (err) {
         console.log(err)
         res.status(400).json({ success: true, message: "Internal Error" });
     }
