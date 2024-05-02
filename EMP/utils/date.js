@@ -1,3 +1,4 @@
+const moment = require("moment");
 
 dateCreation=(dateObject)=>{
     const day = dateObject.getDate();
@@ -15,4 +16,8 @@ timeCreation=(dateObject)=>{
     return timeFormate= `${dateObject.getHours()}:${dateObject.getMinutes()}:${dateObject.getSeconds()}`
 }
 
-module.exports={dateCreation,timeCreation}
+formateDate=(date)=>{
+    return moment(date).format("DD/MMM/YYYY");
+}
+
+module.exports={dateCreation,timeCreation,formateDate}

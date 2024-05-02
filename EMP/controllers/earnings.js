@@ -9,6 +9,7 @@ exports.earnings = async (req, res) => {
         const TimeStamp = Date.now();
         const dateObject = new Date(TimeStamp);
         const date = DateFormat.dateCreation(dateObject)
+        console.log("earnings", req.body)
 
         let EarningsTable = `create table if not exists employeesEarnings(
             id varchar(100) not null,
@@ -42,7 +43,7 @@ exports.earnings = async (req, res) => {
                 return res.status(200).json({ sucess: false, message: "Employee is already exits" })
             }
             else {
-                console.log(req.body.EmpCode)
+
                 let InsertData = `insert into employeesEarnings(id,EmpCode,companyId,totalCtcPerMonth,basic,convencyAllowance,HRA,medicalAllowance,dearnessAllowance,
                         educationAllowance,splAllowance,pfEmployee,pfEmployer,insurance,gratuity,esi,createdOn) 
                         values('${UUID}','${req.body.EmpCode}','${req.params.compId}','${req.body.totalCtcPerMonth}','${req.body.basic}',

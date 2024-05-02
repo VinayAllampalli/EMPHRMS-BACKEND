@@ -11,6 +11,7 @@ const swaggerSpec = require('./swaggerOptions.js');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
+
 var app = express();
 
 app.use(logger('dev'));
@@ -33,7 +34,8 @@ var routeConfig = require('./routesConfig/routes-config')
 app.use("/public/uploads", express.static(__dirname + "/public/uploads"));
 
 //routes initials
-app.use('/api',routeConfig)
+
+app.use('/api',routeConfig);
 
 
 

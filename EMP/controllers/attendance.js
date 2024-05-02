@@ -3,8 +3,8 @@ const moment = require('moment')
 exports.getAttedanceFromTo = async (req, res) => {
     console.log('Get Attedance Api is triggred');
     try {
-        let data = req.body
-        const Attedance = `select * from task where empcode='${req.params.EmpCode}' and log_date between '${data.fromDate}' and '${data.toDate}'`
+       
+        const Attedance = `select * from alltasks where taskid='${req.params.task}'`
         await client.query(Attedance, (err, result) => {
             if (err) {
                 console.log('--->', err)

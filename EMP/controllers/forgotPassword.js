@@ -56,7 +56,7 @@ exports.forgotPasswordGenratedOtp = async (req, res) => {
                             .json({
                                 success: true,
                                 message:
-                                    "You have requested to reset your password for we send OTP to your Email",
+                                    "You have requested to reset your password for that we send OTP to your Email Id",
                                 value: Id
                             });
                     }

@@ -28,10 +28,8 @@ exports.CheckingForProbition = async (req, res) => {
                 else {
                     console.log("No data to update")
                 }
-
             }
         })
-
     }
     catch (err) {
         console.log(err)
@@ -58,10 +56,8 @@ exports.leavesGeneration = async (req, res) => {
                 for (let i = 0; i < result.rows.length; i++) {
                     const { empcode, probitiondate } = result.rows[i];
                     const probationEndDate = probitiondate;
-                    console.log(probationEndDate);
                     const today = new Date();
                     if (today >= probationEndDate) {
-                        console.log(empcode);
                         const queryLeaves = `INSERT INTO leaves (empCode, casualleaves, sickleave) 
               VALUES ('${empcode}', 1, 0.5)
               ON CONFLICT (empCode) DO UPDATE SET 
@@ -70,11 +66,10 @@ exports.leavesGeneration = async (req, res) => {
 
                         try {
                             const res = await client.query(queryLeaves);
-                            // console.log(res.rows);
                             resultArray.push(res.rows);
 
                         } catch (error) {
-                            console.log(error);
+
                             // res.status(400).json({ success: false, message: "Something Went wrong " });
                         }
                     }
@@ -160,8 +155,9 @@ exports.UpdateLeaveStatus = async (req, res) => {
 
 exports.ApplyForLeaves = async (req, res) => {
     console.log("Apply for leaves api is triggred")
+    console.log("------->",req.query)
     try {
-        let appliedLeavesTable = `create table if not exists leavesapplied(leaveId Varchar(100) not null,EmpCode VARCHAR(100) not null,reportingmangerid varchar not null,typeOfleave varchar not null, totalDays decimal not null,fromDate date not null,toDate date not null, note varchar(100), status text not null)`
+        let appliedLeavesTable = `create table if not exists leavesapplied(leaveId Varchar(100) not null,EmpCode VARCHAR(100) not null,reportingmangerid varchar not null,typeOfleave varchar not null, totalDays decimal not null,fromDate date not null,toDate date not null, note varchar(100), status text not null,applied_date date not null)`
         await client.query(appliedLeavesTable, (err) => {
             console.log(err)
         })
@@ -171,12 +167,11 @@ exports.ApplyForLeaves = async (req, res) => {
                 console.log(err)
             }
             else {
+                const date = formateDate(new Date())
                 let records = result.rows
                 for (let i = 0; i < records.length; i++) {
                     let totalCL = records[i].casualleaves
                     let totalSL = records[i].sickleave
-                    console.log(totalCL, totalSL)
-                    console.log(req.body)
                     let objstartDate = moment(req.body.startDate).format('DD/MMM/YYYY');
                     let objendDate = moment(req.body.endDate).format('DD/MMM/YYYY');
                     let getReportingManagerID = `select reportingmangerid from employees where empcode = '${req.params.EmpCode}'`
@@ -194,9 +189,8 @@ exports.ApplyForLeaves = async (req, res) => {
                                 res.status(200).json({ success: true, message: "You have less leaves..." });
                             }
                             else {
-
-                                let updatetable = `INSERT INTO leavesapplied (leaveId,empCode,reportingmangerid, typeOfleave, totalDays,fromDate,toDate,note,status) 
-                                values('${leaveIdString}','${req.params.EmpCode}','${reportingManagerID}','${req.body.typeofleave}',${req.body.totalDays},'${objstartDate}','${objendDate}','${req.body.note}','Pending')`
+                                let updatetable = `INSERT INTO leavesapplied (leaveId,empCode,reportingmangerid, typeOfleave, totalDays,fromDate,toDate,note,status,applied_date,companyid) 
+                                values('${leaveIdString}','${req.params.EmpCode}','${reportingManagerID}','${req.body.typeofleave}',${req.body.totalDays},'${objstartDate}','${objendDate}','${req.body.note}','Pending','${date}','${req.query.CompanyId}')`
                                 await client.query(updatetable)
                                 res.status(200).json({ success: true, message: "Leave applied Sucessfully" });
                             }
@@ -215,8 +209,10 @@ exports.ApplyForLeaves = async (req, res) => {
                                 res.status(200).json({ success: true, message: "You have less leaves..." });
                             }
                             else {
-                                let updatetable = `INSERT INTO leavesapplied (leaveId,empCode, reportingmangerid,typeOfleave, totalDays,fromDate,toDate,note,status) 
-                                values('${leaveIdString}','${req.params.EmpCode}','${reportingManagerID}','${req.body.typeofleave}',${req.body.totalDays},'${objstartDate}','${objendDate}','${req.body.note}','Pending')`
+                               
+                                
+                                let updatetable = `INSERT INTO leavesapplied (leaveId,empCode, reportingmangerid,typeOfleave, totalDays,fromDate,toDate,note,status,applied_date,companyid) 
+                                values('${leaveIdString}','${req.params.EmpCode}','${reportingManagerID}','${req.body.typeofleave}',${req.body.totalDays},'${objstartDate}','${objendDate}','${req.body.note}','Pending','${date}','${req.query.CompanyId}')`
                                 await client.query(updatetable)
                                 res.status(200).json({ success: true, message: "Leave applied Sucessfully" });
                             }
@@ -225,7 +221,7 @@ exports.ApplyForLeaves = async (req, res) => {
                     }
                     else if (req.body.typeofleave == 'PaidLeave') {
                         let updatetable = `INSERT INTO leavesapplied (leaveId,empCode, reportingmangerid,typeOfleave, totalDays,fromDate,toDate,note,status) 
-                        values('${leaveIdString}','${req.params.EmpCode}','${reportingManagerID}','${req.body.typeofleave}',${req.body.totalDays},'${objstartDate}','${objendDate}','${req.body.note}','Pending')`
+                        values('${leaveIdString}','${req.params.EmpCode}','${reportingManagerID}','${req.body.typeofleave}',${req.body.totalDays},'${objstartDate}','${objendDate}','${req.body.note}','Pending','${date}')`
                         await client.query(updatetable)
                         res.status(200).json({ success: true, message: "Leave applied Sucessfully" });
                     }
@@ -246,16 +242,16 @@ exports.sendleavesForApproval = async (req, res) => {
         await client.query(getData, (err, result) => {
             if (err) {
                 console.log(err)
-                res.status(400).json({ success: false, message: "Something Went wrong " });
+                res.json({ success: false, message: "Something Went wrong " });
             }
             else {
-                return res.status(200).json({ success: true, message: "Data Fetch Successfully", result: result.rows });
+                return res.json({ success: true, message: "Data Fetch Successfully", result: result.rows });
             }
         })
     }
     catch (err) {
         console.log(err)
-        res.status(400).json({ success: true, message: "Internal Error" });
+        res.json({ success: true, message: "Internal Error" });
     }
 }
 
@@ -263,14 +259,20 @@ exports.sendleavesForApproval = async (req, res) => {
 exports.getAllmyleaves = async (req, res) => {
     console.log('Get All my leaves api is  triggered')
     try {
-        let allMyleaves = `select * from leavesapplied where empcode = '${req.params.EmpCode}'`
+        const year = req.query.year;
+
+        console.log(req.query)
+        
+        let allMyleaves = `select * from leavesapplied where empcode = '${req.params.EmpCode}' and extract (year from fromdate) = '${year}' and companyid ='${req.query.CompanyId}'`
         await client.query(allMyleaves, (err, result) => {
             if (err) {
                 console.log(err)
                 res.status(400).json({ success: false, message: "Something Went wrong " });
             }
             else {
+                console.log(result.rows)
                 return res.status(200).json({ success: true, message: "Data Fetch Successfully", result: result.rows });
+                
             }
         })
     }

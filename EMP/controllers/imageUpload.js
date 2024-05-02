@@ -15,6 +15,7 @@ exports.imageUpload = async (req, res) => {
                 res.status(400).json({ success: false, message: "Somethimg Went wrong ", err })
             }
             else if (result.rowCount > 0) {
+                console.log("--->",req.file)
                 const filename = req.file.filename;
                 console.log("----->", filename);
                 const basepath = `${req.protocol}://${req.get('host')}/public/uploads/`;
@@ -79,7 +80,7 @@ exports.getEmpDataWithImage = async (req, res) => {
     try {
         let query = `  SELECT employees.empcode,employees.firstname, employees.lastname, COALESCE(image.file, 'No image') as file
         FROM employees
-        LEFT JOIN image ON employees.empcode = image.empcode;`
+        LEFT JOIN image ON employees.empcode = image.empcode where companyid = '${req.query.CompanyId}';`
         await client.query(query, (err, result) => {
             if (!err) {
                 return res.status(200).json({ success: true, message: "fetch Successfully", result: result.rows });

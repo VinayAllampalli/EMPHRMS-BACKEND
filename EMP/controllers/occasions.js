@@ -156,7 +156,7 @@ exports.getHolidays = async (req, res) => {
               LEFT JOIN
                 holidayImage ON holidays.holidayname = holidayImage.holidayname
               WHERE
-                EXTRACT(YEAR FROM holidaydate) = ${req.params.year} and company_id = '${req.params.compId}'
+                EXTRACT(YEAR FROM holidaydate) = ${req.params.year} and company_id = '${req.params.compId}' ORDER BY holidaydate ASC;
             `;
 
       await client.query(getallhoildays, (err, result) => {

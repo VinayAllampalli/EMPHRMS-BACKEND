@@ -1,5 +1,6 @@
 
 const client = require('../connections/db');
+const { generateToken } = require('../middleware/auth');
 const password = require('../utils/password')
 exports.login = async (req, res) => {
     console.log("Login Api is triggred");
@@ -22,7 +23,9 @@ exports.login = async (req, res) => {
                     const pass = X[i].password
                     const check = await password.passwordCompare(req.body.password, pass);
                     if (check == true) {
-                        res.status(200).json({ success: true, message: "Login successfully", data: user.rows })
+                        // here first we are creating token for api authetication every one hour it wil expires then again u have to login then new token was genrated
+                        const token = generateToken(user.rows[0].empcode) 
+                        res.status(200).json({ success: true, message: "Login successfully", data: user.rows, token: token })
                         console.log("success")
                     }
                     else {
